@@ -1,0 +1,4 @@
+cryptography==42.0.8
+future==1.0.0
+Pillow==10.0.1
+Nuitka==2.4.4

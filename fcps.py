@@ -1,6 +1,6 @@
 import os.path
-from time import sleep
 import datetime
+import subprocess
 from os import system,remove,rmdir,listdir,path,mkdir
 from shutil import copy
 current_year = datetime.datetime.now().year
@@ -34,17 +34,18 @@ def exitto(cool=True):
     else:
         pass
     exit()
-def ask():
+def ask(file):
     ask = tk.messagebox.askyesno(title="Confirm Deletion", message="""can the FCPDA delete the output folder if the app
     made this folder allow to it to delete the folder but if you made this folder you should know that you must to change it's name because
     names for folders(output,build,DSA) would make problems to the system""")
     if ask:
         try:
-            rmdir('./output')
+            remove(f'./{file}')
+            remove('./FCPlogo.png')
         except (FileNotFoundError,OSError):
             for k in range(len(listdir('./output'))):
                 try:
-                    remove(f'./output/{listdir("./output")[k]}')
+                    remove(f'./{listdir("./output")[k]}')
                 except PermissionError:
                     pass
             rmdir('./output')
@@ -111,7 +112,8 @@ class filecontainer():
         replace \n with \\n inside(r'') as part to solve the PSRP"""
         #----------------------------------------------------------
         return string.replace(r'\\n',r'\n')
-    def FCmaker(self,file_path:str,filespatho_list:list):
+    def FCmaker(self,file_path:str,filespatho_list:list,modepass):
+        self.mode = modepass
         if file_path != f'{file_path[:-3]}.py':
             messagebox.showerror(title="bad news", message=r"""an error because of filepath has no fileformat or it's not the .py file format
 note:you must write the file name like this: 'name.py' no folder at the back or front of it and you must to write the .py file format""")
@@ -131,7 +133,6 @@ thing in that folder had the same name as any of the automatically generated tem
         #setting the file_path parameter to self.filepath
         self.fileslist = filespatho_list
         #setting the filespatho_list parameter to self.fileslist
-        copy('./FCPlogo.png', './output/FCPlogo.png')
         #-----------------------------------------------------
         """setting the parameter as vars. to make them easier and better for both inside and
         outside this function"""
@@ -142,10 +143,10 @@ thing in that folder had the same name as any of the automatically generated tem
         because it's used as indentifier for each chank"""
         #------------------------------------------------------
         try:
-            self.delfile = open(f'./output/{self.filepath}', 'w')
+            self.delfile = open(f'./{self.filepath}', 'w')
             self.delfile.write('')
             self.delfile.close()#clear all data of the file in self.filepath
-            self.base = open(f'./output/{self.filepath}','w')
+            self.base = open(f'./{self.filepath}','w')
             self.base.write(f"""import cryptography.fernet
 import tkinter as tk
 import os
@@ -155,6 +156,7 @@ gui = tk.Tk()
 gui.title("FCP file opener")
 gui.geometry('300x300')
 gui.resizable(False, False)
+mode = {self.mode}
 try:
     imagepath = Image.open('./FCPlogo.png')
     image = ImageTk.PhotoImage(imagepath)
@@ -169,9 +171,13 @@ tk.Label(gui,text="THE HEAVY DRAGON EDITION",background='light grey').place(x=0,
 tk.Label(gui,text="FCP program mark type: -ODS",background='light grey').place(x=0,y=120)
 tk.Label(gui,text="COPYRIGHT {current_year} WEDU",background='light grey').place(x=0,y=150)
 tk.Label(gui,text="All RIGHTS RESERVED",background='light grey').place(x=0,y=180)
-tk.Label(gui,text='Enter the password').place(x=180,y=0)
-PASSWORD = tk.StringVar()
-entry = tk.Entry(gui,width=21,textvariable=PASSWORD).place(x=168,y=20)
+if mode == True:
+    tk.Label(gui,text='Enter the password').place(x=180,y=0)
+    PASSWORD = tk.StringVar()
+    entry = tk.Entry(gui,width=21,textvariable=PASSWORD).place(x=168,y=20)
+else:
+    tk.Label(gui,text='this file is password free').place(x=168,y=0)
+    PASSWORD = {key}
 def exito(case=True):
    gui.destroy()
    if case == True:
@@ -184,7 +190,7 @@ def openfile(PASSWORD):\n""")
             for i2 in range(len(self.fileslist)):
                 #a loop that it's length is how many items in the self.fileslist var.
                 self._extracted_from_FCmaker_9(i2, self.fileslist)#calling the _extracted_from_FCmaker_9
-            self.base2 = open(f'./output/{self.filepath}','a')
+            self.base2 = open(f'./{self.filepath}','a')
             print(f"""   ORG_PASSWORD = {key}
    if PASSWORD == ORG_PASSWORD:
       try:
@@ -203,7 +209,7 @@ the data expect if you wrote a correct password''')
       exito(False)
 """,file=self.base2)
             self.base2.close()
-            self.base3 = open(f'./output/{self.filepath}','a')
+            self.base3 = open(f'./{self.filepath}','a')
             for i3 in range(len(self.fileslist)):
                 print(f"""   FREE{i3 + 1} = cryptography.fernet.Fernet(PASSWORD).decrypt(cryptography.fernet.Fernet(ORG_PASSWORD).encrypt(d{i3 + 1}[3:-2]))
    FREEPATH{i3 + 1} = str(cryptography.fernet.Fernet(PASSWORD).decrypt(cryptography.fernet.Fernet(ORG_PASSWORD).encrypt(p{i3 + 1}[1:-1])),'utf-8')
@@ -212,45 +218,59 @@ the data expect if you wrote a correct password''')
    w""" + f"""{i3 + 1}.write(FREE""" + f'''{i3 + 1}''' + """)
    w""" + f"""{i3 + 1}.close()""", file=self.base3)
             print("""   exito()
-def openfiles():
-   print(bytes(PASSWORD.get()[2:-1],'utf-8'))
-   openfile((bytes(PASSWORD.get()[2:-1],'utf-8')))
-button = tk.Button(gui,text='send',command=openfiles).place(x=213,y=42)
+if mode == True:
+    def openfiles():
+       print(bytes(PASSWORD.get()[2:-1],'utf-8'))
+       openfile((bytes(PASSWORD.get()[2:-1],'utf-8')))
+    button = tk.Button(gui,text='send',command=openfiles).place(x=213,y=42)
+else:
+    def openfiles():
+       openfile(PASSWORD)
+    button = tk.Button(gui,text='extract',command=openfiles,width=10,borderwidth=7,background='blue',foreground='yellow').place(x=190,y=22)
 gui.mainloop()""", file=self.base3)
             self.base3.close()
         except (PermissionError,AttributeError,OSError):
             messagebox.showerror(title="bad news", message=r"an error because of wrong info or it's just Permission denied")
-            ask()
-        system(f'cd ./output/ & pyinstaller --noconsole {self.filepath}')
-        #try:
+            ask(self.filepath)
+        self.flo = True
+        print('starting py to exe')
+        try:
+            subprocess.run(f'cd {path.dirname(path.abspath(__file__))}/venv/Scripts & python -m nuitka --standalone --output-dir={path.dirname(path.abspath(__file__))} --enable-plugin=tk-inter --windows-console-mode=disable {path.dirname(path.abspath(__file__))}/omg.py',shell=True, check=True)
+        except subprocess.CalledProcessError:
+            exitto(False)
         while (0==0):
-            if os.path.exists(f'./output/dist/{self.filepath[:-3]}'):
-                system(f'''powershell -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c cd {path.dirname(path.abspath(__file__))}/output/ & MOVE build {self.filepath[:-3]}_build & MOVE dist DSA'"''')
+            if os.path.exists(f'./omg.dist/{self.filepath[:-3]}.exe'):
+                os.system(f'''powershell -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c cd {path.dirname(path.abspath(__file__))} & MOVE {self.filepath[:-3]}.dist {self.filepath[:-3]} & MOVE {self.filepath[:-3]}.build {self.filepath[:-3]}_build'"''')
                 while (0==0):
-                    if os.path.exists(f'./output/DSA/{self.filepath[:-3]}'):
-                        try:
-                            copy('./output/FCPlogo.png', f'./output/DSA/{self.filepath[:-3]}/FCPlogo.png')
-                            open(f'./output/{file_path[:-3]}_password.txt','x').close()
-                            passfile = open(f'./output/{file_path[:-3]}_password.txt', 'w')
-                            passfile.write(f'{key}')
-                            passfile.close()
-                        except FileExistsError:
-                            ask()
-                        remove(f"./output/{self.filepath}")
-                        remove('./output/FCPlogo.png')
+                    if os.path.exists(f'./{self.filepath[:-3]}/{self.filepath[:-3]}.exe'):
+                        copy('./FCPlogo.png', f'./{self.filepath[:-3]}/FCPlogo.png')
                         break
-                    else:
-                        sleep(10)
                 break
-            else:
-                sleep(5)
-        """
+        try:
+            try:
+                if self.mode:
+                    open(f'./output/{file_path[:-3]}_password.txt','x').close()
+                    passfile = open(f'./output/{file_path[:-3]}_password.txt', 'w')
+                    passfile.write(f'{key}')
+                    passfile.close()
+                else:
+                    pass
+            except FileExistsError:
+                ask(self.filepath)
+            remove(f"./{self.filepath}")
+            if not self.mode:
+                try:
+                    rmdir('./output')
+                except (OSError,PermissionError):
+                    pass
         except (FileNotFoundError,PermissionError):
             messagebox.showerror(title="bad news",message="an error happened because you wrote a name of folder before the file name\n or a Permisstion error but it's mostly because you wrote folder name you must to write filename with .py extension nothing more or less")
             exitto(False)
-        """
-        messagebox.showinfo(title="the password it's found in...",message=f"we sent it in a text file called\n'./output/{file_path[:-3]}_password.txt'")
-        exitto()
+        if self.mode:
+            messagebox.showinfo(title="the password it's found in...",message=f"we sent it in a text file called\n'./{file_path[:-3]}_password.txt'")
+        else:
+            pass
+        exitto(True)
     def _extracted_from_FCmaker_9(self, i2, fileslist):
         self.i += 1
         '''important var. that gives the number for each chank to make it diffrent from the
@@ -259,29 +279,41 @@ gui.mainloop()""", file=self.base3)
             self.makefilechank = f"""   d{self.i} = b'''"{open(fileslist[i2],'rb').read()}"'''\n"""
         except FileNotFoundError:
             messagebox.showerror(title="bad news",message=r"an error happened because one of the files in the filelist wasn't found")
-            remove(f'./output/{self.filepath}')
-            ask()
+            remove(f'./{self.filepath}')
+            ask(self.filepath)
             exitto(False)
         #this is the part that makes the place for files data(data chank)
         self.makepathchank = f"""   p{self.i} = b'''"{fileslist[i2]}"'''\n"""
         #this is the part that makes the place for files paths(path chank)
         #--------------------------------------------------------
-        self.writingfile = open(f'output/{self.filepath}','a')
+        self.writingfile = open(f'{self.filepath}','a')
         #start I/O operations for the fc file with the append mode
         print(self.makefilechank, file=self.writingfile)#writing the data chank in the fc file
         print(self.makepathchank, file=self.writingfile)#writing the path chank in the fc file
         #writing both chanks into the fc file
         self.writingfile.close()#close all file operations
 FC = filecontainer()
-def do_it():
-    print(filepath.get())
-    temp1 = filelist.get()
-    thelist = []
-    for i in range(len(temp1.split(','))):
-        thelist.append(temp1.split(',')[i])
-    print(thelist)
-    FC.FCmaker(filepath.get(),thelist)
-tk.Button(gui,text='create',command=do_it,background='blue',foreground='yellow',borderwidth='4',font=("Arial", 10, "bold"),width=10).pack(pady=5)
+class do():
+   def __init__(self):
+      self.modepass = False
+
+   def ch1(self):
+      self.modepass = True
+
+   def ch2(self):
+      self.modepass = False
+   def do_it(self):
+     print(filepath.get())
+     temp1 = filelist.get()
+     thelist = []
+     for i in range(len(temp1.split(','))):
+         thelist.append(temp1.split(',')[i])
+     print(thelist)
+     FC.FCmaker(filepath.get(),thelist,self.modepass)
+dovar = do()
+tk.Button(gui,text='password',command=dovar.ch1,background='red',foreground='yellow',borderwidth='4',font=("Arial", 10, "bold"),width=8).place(x=5,y=85)
+tk.Button(gui,text='no password',command=dovar.ch2,background='red',foreground='yellow',borderwidth='4',font=("Arial", 10, "bold"),width=10).place(x=103,y=85)
+tk.Button(gui,text='create',command=dovar.do_it,background='blue',foreground='yellow',borderwidth='4',font=("Arial", 10, "bold"),width=8).place(x=217,y=85)
 tk.Label(gui,width=50,height=100,background='light gray').place(x=0,y=120)
 tk.Label(gui,text='FCP file creator version: 2.0 BETA',background='light gray').place(x=0,y=130)
 tk.Label(gui,text="THE HEAVY DRAGON EDITION",background='light gray').place(x=0,y=160)

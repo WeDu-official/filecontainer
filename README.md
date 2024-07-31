@@ -22,10 +22,10 @@ library.
 support it and how secure it's.
 
 
-5-Note: Currently, you cannot create storage files without a password. While it offers strong encryption, it also requires 
+5-Note: you can create storage files with or without password. While it offers strong encryption, it also requires 
 
 
-significant storage space and RAM/disk usage. Therefore, it's best suited for smaller files like documents, source code, etc., that 
+significant storage space and RAM/disk usage to both creation and extraction processes. Therefore, it's best suited for smaller files like documents, source code, etc., that 
 
 
 require secure encryption.
