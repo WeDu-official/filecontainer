@@ -1,8 +1,5 @@
 # Filecontainer 2.0
 
-WE WOULD COMPLETE WORKING ON IT TOWWMORO NO ONE NOW SHOULD DOWNLOAD IT FROM HERE OR WEBSITE
-
-
 Note: This is the new repository for the File Container Project (FCP).
 
 Changes:
