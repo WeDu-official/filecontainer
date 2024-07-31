@@ -235,7 +235,7 @@ gui.mainloop()""", file=self.base3)
         self.flo = True
         print('starting py to exe')
         try:
-            subprocess.run(f'cd {path.dirname(path.abspath(__file__))}/venv/Scripts & python -m nuitka --standalone --output-dir={path.dirname(path.abspath(__file__))} --enable-plugin=tk-inter --windows-console-mode=disable {path.dirname(path.abspath(__file__))}/omg.py',shell=True, check=True)
+            subprocess.run(f'cd {path.dirname(path.abspath(__file__))}/venv/Scripts & python -m nuitka --standalone --output-dir={path.dirname(path.abspath(__file__))} --enable-plugin=tk-inter --windows-console-mode=disable {path.dirname(path.abspath(__file__))}/{self.filepath}',shell=True, check=True)
         except subprocess.CalledProcessError:
             exitto(False)
         while (0==0):
